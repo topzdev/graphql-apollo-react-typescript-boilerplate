@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "pg": "^8.3.0",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.3.3"
+  },
+  "name": "crud-nextjs-graphql",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/topzdev/graphql-crud-practice.git"
+  },
+  "keywords": [
+    "topzdev"
+  ],
+  "author": "topzdev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/topzdev/graphql-crud-practice/issues"
+  },
+  "homepage": "https://github.com/topzdev/graphql-crud-practice#readme",
+  "description": ""
+}
