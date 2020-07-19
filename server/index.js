@@ -1,64 +1,8 @@
 const { ApolloServer, gql } = require('apollo-server');
-const { Sequelize, DataTypes, Deferrable } = require('sequelize')
+const models = require('./models')
+models.sequelize.authenticate().then(() => console.log('Database Connected')).catch(error => console.log('Database Error', error))
 
-const sequelize = new Sequelize('crud-graphql', 'postgres', 'dev123', {
-    host: 'localhost',
-    dialect: 'postgres'
-})
 
-const Category = sequelize.define('Category', {
-
-    id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.UUIDV4
-    },
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    description: {
-        type: DataTypes.STRING
-    }
-}, {
-    timestamps: false
-})
-
-const Product = sequelize.define('Product', {
-    id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        primaryKey: true,
-        defaultValue: Sequelize.UUIDV4
-    },
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    description: {
-        type: DataTypes.STRING
-    },
-    price: {
-        type: DataTypes.FLOAT
-    },
-    category: {
-        type: DataTypes.UUID,
-        references: {
-            model: Category,
-            key: 'id',
-            deferrable: Deferrable.INITIALLY_IMMEDIATE
-        }
-    }
-}, {
-    timestamps: false
-})
-
-// Category.sync({ force: true })
-// Product.sync({ force: true })
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-// your data.
 const typeDefs = gql`
   type Category {
     id: ID
@@ -110,7 +54,6 @@ const resolvers = {
 
 const server = new ApolloServer({ typeDefs, resolvers });
 
-sequelize.authenticate().then(() => console.log('Database Connected')).catch(error => console.log('Database Error', error))
 
 server.listen().then(({ url }) => {
     console.log(`🚀  Server ready at ${url}`)
