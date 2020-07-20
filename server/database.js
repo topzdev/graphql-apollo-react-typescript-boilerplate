@@ -3,7 +3,7 @@ const { Sequelize } = require('sequelize')
 
 module.exports = new Sequelize(
     'crud-graphql',
-    'postgrest',
+    'postgres',
     'dev123',
     {
         host: 'localhost',

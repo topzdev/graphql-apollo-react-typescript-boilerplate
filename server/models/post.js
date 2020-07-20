@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => {
+module.exports = function (sequelize, DataTypes) {
 
     const Post = sequelize.define("post", {
         id: {
@@ -37,8 +37,6 @@ module.exports = (sequelize, DataTypes) => {
         },
 
     }, { timestamps: true })
-
-
 
     return Post
 }
