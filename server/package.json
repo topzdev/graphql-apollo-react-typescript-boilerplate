@@ -10,8 +10,11 @@
   "author": "@topzdev",
   "license": "ISC",
   "dependencies": {
+    "@graphql-tools/merge": "^6.0.14",
     "apollo-server": "^2.16.0",
+    "bcrypt": "^5.0.0",
     "graphql": "^15.3.0",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^8.3.0",
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.21.8"

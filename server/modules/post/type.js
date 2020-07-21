@@ -5,17 +5,17 @@ const postType = gql`
         id: String
         title: String
         content:String
-        author: Author
+        author: User 
         like: Int
         draft: Boolean
     }
 
-    extend type Query {
-        postsByUserID(id: String!): [Post],
+    type Query {
+        postsByUserId(id: String!): [Post],
         postById(id: String!): Post
     }
 
-    extend type Mutations {
+    type Mutation {
         addPost(title: String!, content: String!, draft: Boolean!): Result
         updatePost(id: String!, title: String!, content: String!, draft: Boolean!): Result
         deletePost(id: String!): Result

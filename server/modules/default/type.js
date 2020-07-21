@@ -10,7 +10,7 @@ const defaultType = gql`
         data: DataResult
     }
 
-    extend type Query {
+    type Query {
         helloWorld: String
     }
 `
