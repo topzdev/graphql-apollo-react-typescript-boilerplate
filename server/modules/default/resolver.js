@@ -1,9 +1,8 @@
 module.exports = {
     DataResult: {
-        __resolverType: (obj) => {
+        __resolveType: (obj) => {
             if (obj.username) return 'User'
             if (obj.title) return 'Post'
-            if (obj instanceof String) return "Token"
 
             return null
         }

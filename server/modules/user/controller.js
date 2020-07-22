@@ -29,10 +29,7 @@ module.exports = {
             }
         } catch (error) {
 
-            throw Error({
-                success: false,
-                message: error
-            })
+            throw Error(error)
         }
     },
 
@@ -48,20 +45,17 @@ module.exports = {
             const saltRounds = 10;
             const hashPassword = await bcrypt.hash(password, saltRounds);
 
-            const account = models.User.create({ username, hashPassword });
+            const account = models.User.create({ username, password: hashPassword });
 
             const token = jwt.sign({ id: account.id }, config.jwtSecret, { expiresIn: '24h' })
 
             return {
                 success: true,
                 message: "Account created",
-                data: token
+                token
             }
         } catch (error) {
-            throw Error({
-                success: false,
-                message: error
-            })
+            throw Error(error)
         }
     }
 }

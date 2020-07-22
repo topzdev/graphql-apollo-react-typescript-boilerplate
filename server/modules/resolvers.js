@@ -5,9 +5,9 @@ const postResolver = require('./post/resolver')
 
 
 const resolvers = [
+    defaultResolver,
     userResolver,
     postResolver,
-    defaultResolver
 ]
 
 

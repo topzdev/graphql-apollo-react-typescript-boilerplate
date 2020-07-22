@@ -11,6 +11,7 @@ const postType = gql`
     }
 
     type Query {
+        postsFeed: [Post],
         postsByUserId(id: String!): [Post],
         postById(id: String!): Post
     }

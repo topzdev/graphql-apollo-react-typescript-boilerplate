@@ -1,11 +1,12 @@
+
 module.exports = {
     Mutation: {
-        login: () => {
-            return "Hello World!"
+        login: (_, args, { db }) => {
+            return db.user.login(args);
         },
 
-        signUp: () => {
-            return "Hello, World!"
+        signUp: (_, args, { db }) => {
+            return db.user.signUp(args)
         }
     }
 }

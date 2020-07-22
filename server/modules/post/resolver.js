@@ -1,22 +1,27 @@
+const { parseResolveInfo } = require('graphql-parse-resolve-info')
+
 module.exports = {
     Query: {
-        postsByUserId: () => {
-            return [{ title: 'Hello World!' }]
+        postsFeed: (_, __, { db }, info) => {
+            return db.post.postsFeed()
         },
-        postById: () => {
-            return { title: 'Hello, World!' }
+        postsByUserId: (_, { id }, { db }, info) => {
+            return db.post.postsByUserId(id)
+        },
+        postById: (_, { id }, { db }, info) => {
+            return db.post.postById(id)
         }
     },
 
     Mutation: {
-        addPost: () => {
-            return { message: "Hello World" }
+        addPost: (_, args, { db }) => {
+            return db.post.addPost(args);
         },
-        updatePost: () => {
-            return { message: "Hello World" }
+        updatePost: (_, args, { db }) => {
+            return db.post.updatePost(args)
         },
-        deletePost: () => {
-            return { message: "Hello World" }
+        deletePost: (_, args, { db }) => {
+            return db.post.deletePost(args)
         },
     }
 }

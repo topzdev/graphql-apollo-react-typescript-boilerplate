@@ -1,6 +1,6 @@
 module.exports = function (sequelize, DataTypes) {
 
-    const Post = sequelize.define("post", {
+    const Post = sequelize.define("posts", {
         id: {
             type: DataTypes.UUID,
             primaryKey: true,
@@ -17,15 +17,6 @@ module.exports = function (sequelize, DataTypes) {
             allowNull: false
         },
 
-        author: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            references: {
-                model: "user",
-                key: "id"
-            }
-        },
-
         likes: {
             type: DataTypes.INTEGER,
             defaultValue: 0
@@ -37,6 +28,11 @@ module.exports = function (sequelize, DataTypes) {
         },
 
     }, { timestamps: true })
+
+    Post.associate = (models) => {
+        models.Post.belongsTo(models.User, { foreignKey: 'author', keyType: DataTypes.UUID })
+        models.User.hasMany(models.Post)
+    }
 
     return Post
 }

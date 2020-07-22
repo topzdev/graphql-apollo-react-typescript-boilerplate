@@ -8,6 +8,7 @@ const defaultType = gql`
         success: Boolean
         message: String
         data: DataResult
+        token: String
     }
 
     type Query {
