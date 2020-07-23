@@ -27,10 +27,19 @@ module.exports = function (sequelize, DataTypes) {
             defaultValue: false
         },
 
+        userId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: 'users',
+                key: 'id'
+            }
+        }
+
     }, { timestamps: true })
 
     Post.associate = (models) => {
-        models.Post.belongsTo(models.User, { foreignKey: 'author', keyType: DataTypes.UUID })
+        models.Post.belongsTo(models.User, { as: 'author', foreignKey: 'userId' })
         models.User.hasMany(models.Post)
     }
 
