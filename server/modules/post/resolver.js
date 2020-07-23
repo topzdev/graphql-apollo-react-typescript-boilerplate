@@ -1,59 +1,33 @@
-const { parseResolveInfo } = require('graphql-parse-resolve-info')
-const models = require('../models')
-
 module.exports = {
 
     Post: {
-        author: ({ userId }, _, { db, userLoader }) => {
+        author: ({ userId }, _, { db, loaders: { userLoader } }) => {
+            console.log('Usert', userId)
             return userLoader.load(userId)
         }
     },
 
     Query: {
         postsFeed: (_, __, { db }) => {
-            return db.Post.findAll({
-                order: [['createdAt', 'DESC']]
-            })
+            return db.post.postsFeed()
         },
-        postsByUserId: (_, { id }, { db }) => {
-            return db.Post.findAll({
-                where: { userId: id },
-                attributes: { include },
-            });
+        postsByUserId: (_, args, { db }) => {
+            return db.post.postsByUserId(args)
         },
-        postById: (_, { id }, { db }) => {
-            return db.Post.findByPk(id)
+        postById: (_, args, { db }) => {
+            return db.post.postById(args);
         }
     },
 
     Mutation: {
-        addPost: (_, { title, content, draft }, { db }) => {
-            return {
-                success: true,
-                message: 'Post Added',
-                data: db.Post.create({
-                    title, content, draft,
-                    // remove when done with user id
-                    userId: "66073b8a-8c20-4f73-a33e-b0ddab762065"
-                })
-            }
+        addPost: (_, args, { db }) => {
+            return db.post.addPost(args);
         },
         updatePost: (_, args, { db }) => {
-            const id = args.id;
-            delete args.id;
-
-            return {
-                success: true,
-                message: 'Post Updated',
-                data: db.Post.update(args, { where: { id } })
-            }
+            return db.post.updatePost(args);
         },
-        deletePost: (_, { id }, { db }) => {
-            return {
-                success: true,
-                message: 'Post Deleted',
-                data: db.Post.destroy({ where: { id } })
-            }
+        deletePost: (_, args, { db }) => {
+            return db.post.deletePost(args);
         },
     }
 }

@@ -2,14 +2,22 @@ const { ApolloServer } = require('apollo-server');
 const db = require('./modules/models')
 const typeDefs = require('./modules/types');
 const resolvers = require('./modules/resolvers');
-const { userLoader } = require('./modules/user/loader');
+const controllers = require('./modules/controllers');
+const loaders = require('./modules/loaders');
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: {
-    db,
-    userLoader: userLoader()
+  context: ({ req }) => {
+
+
+    //authentication here
+
+
+    return {
+      db: controllers,
+      loaders
+    }
   }
 });
 

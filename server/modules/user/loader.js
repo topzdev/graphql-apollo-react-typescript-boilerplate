@@ -19,9 +19,6 @@ const usersBatch = async (ids) => {
     })
 
     return ids.map(id => userMap[id])
-
 }
 
-module.exports = {
-    userLoader: () => new DataLoader(usersBatch)
-}
+module.exports = () => new DataLoader(usersBatch)

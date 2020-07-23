@@ -18,7 +18,7 @@ const postType = gql`
 
     type Mutation {
         addPost(title: String!, content: String!, draft: Boolean!): Result
-        updatePost(id: String!, title: String!, content: String!, draft: Boolean!): Result
+        updatePost(id: String!, title: String, content: String, draft: Boolean): Result
         deletePost(id: String!): Result
     }
 `
