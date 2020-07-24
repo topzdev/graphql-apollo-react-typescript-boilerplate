@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server')
+const { gql } = require('apollo-server-express')
 
 const userType = gql`
 
@@ -6,6 +6,11 @@ const userType = gql`
         id: String,
         username: String
     }
+
+    type Query {
+        me: Result
+    }
+
 
     type Mutation {
         login(username: String!, password: String!): Result

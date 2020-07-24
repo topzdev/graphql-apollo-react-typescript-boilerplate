@@ -1,5 +1,4 @@
-const { rule } = require('graphql-shield');
-const { shield } = require('graphql-shield')
+const { rule, not, shield } = require('graphql-shield');
 
 const isAuthenticated = rule({ cache: 'contextual' })(
     async (parent, args, ctx, info) => {
@@ -9,10 +8,19 @@ const isAuthenticated = rule({ cache: 'contextual' })(
     },
 )
 const permissions = shield({
+    Query: {
+        postsFeed: isAuthenticated,
+        postsByUserId: isAuthenticated,
+        postById: isAuthenticated,
+    },
     Mutation: {
+        login: not(isAuthenticated),
+        signUp: not(isAuthenticated),
+
         addPost: isAuthenticated,
         updatePost: isAuthenticated,
         deletePost: isAuthenticated
+
     }
 })
 

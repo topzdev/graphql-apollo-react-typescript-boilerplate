@@ -1,5 +1,4 @@
-const { gql } = require('apollo-server');
-
+const { gql } = require('apollo-server-express')
 
 const defaultType = gql`
     union DataResult = Post | User

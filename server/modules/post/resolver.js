@@ -8,25 +8,61 @@ module.exports = {
 
     Query: {
         postsFeed: (_, __, { db }) => {
-            return db.post.postsFeed()
+            return db.Post.findAll({
+                order: [['createdAt', 'DESC']]
+            })
         },
-        postsByUserId: (_, args, { db }) => {
-            return db.post.postsByUserId(args)
+        postsByUserId: (_, { id }, { db }) => {
+
+            return db.Post.findAll({
+                where: { userId: id },
+            });
         },
-        postById: (_, args, { db }) => {
-            return db.post.postById(args);
+        postById: (_, { id }, { db }) => {
+            return db.Post.findByPk(id)
         }
     },
 
     Mutation: {
-        addPost: (_, args, { db }) => {
-            return db.post.addPost(args);
+        addPost: async (_, { title, content, draft }, { db, req }) => {
+            return {
+                success: true,
+                message: 'Post Added',
+                data: await db.Post.create({
+                    title, content, draft, userId: req.user.id
+                })
+            }
         },
-        updatePost: (_, args, { db }) => {
-            return db.post.updatePost(args);
+        updatePost: async (_, args, { db }) => {
+
+            const id = args.id;
+            delete args.id;
+
+            if (!id) return {
+                success: false,
+                message: 'Id is missing'
+            }
+
+            await db.Post.update(args, { where: { id } })
+
+            return {
+                success: true,
+                message: 'Post Updated',
+                data
+            }
         },
-        deletePost: (_, args, { db }) => {
-            return db.post.deletePost(args);
+        deletePost: async (_, { id }, { db }) => {
+
+            if (!id) return {
+                success: false,
+                message: 'Id is missing'
+            }
+
+            await db.Post.destroy({ where: { id } })
+            return {
+                success: true,
+                message: 'Post Deleted',
+            }
         },
     }
 }
