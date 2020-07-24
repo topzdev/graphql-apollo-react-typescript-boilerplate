@@ -2,7 +2,6 @@ module.exports = {
 
     Post: {
         author: ({ userId }, _, { db, loaders: { userLoader } }) => {
-            console.log('Usert', userId)
             return userLoader.load(userId)
         }
     },

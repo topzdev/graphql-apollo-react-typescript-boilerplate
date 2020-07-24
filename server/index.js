@@ -1,22 +1,30 @@
-const { ApolloServer } = require('apollo-server');
+const { ApolloServer, makeExecutableSchema } = require('apollo-server');
 const db = require('./modules/models')
 const typeDefs = require('./modules/types');
 const resolvers = require('./modules/resolvers');
 const controllers = require('./modules/controllers');
 const loaders = require('./modules/loaders');
+const decodedToken = require('./modules/shared/decodedToken');
+const { applyMiddleware } = require('graphql-middleware');
+const { permissions } = require('./modules/shared/authentication');
 
-const server = new ApolloServer({
+const schema = makeExecutableSchema({
   typeDefs,
   resolvers,
+})
+
+const middleware = [permissions];
+
+const schemaWithMiddleware = applyMiddleware(schema, ...middleware);
+
+const server = new ApolloServer({
+  schema: schemaWithMiddleware,
+
   context: ({ req }) => {
-
-
-    //authentication here
-
-
     return {
       db: controllers,
-      loaders
+      loaders,
+      user: decodedToken(req)
     }
   }
 });

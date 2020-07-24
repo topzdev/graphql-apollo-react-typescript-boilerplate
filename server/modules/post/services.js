@@ -16,7 +16,6 @@ const fetchPostById = ({ id }) => {
     return models.Post.findByPk(id)
 }
 
-
 const addPost = async ({ title, content, draft, userId }) => {
 
     return {

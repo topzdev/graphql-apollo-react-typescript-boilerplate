@@ -2,7 +2,7 @@ const services = require("./services");
 
 const postsFeed = async () => {
     try {
-        return await services.fetchPosts
+        return await services.fetchPosts()
     } catch (error) {
         throw Error(error);
     }
