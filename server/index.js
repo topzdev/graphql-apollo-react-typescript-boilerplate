@@ -1,51 +1,40 @@
-const { ApolloServer } = require('apollo-server-express');
-const db = require('./modules/models')
-const typeDefs = require('./modules/types');
-const resolvers = require('./modules/resolvers');
-const loaders = require('./modules/loaders');
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const decodedToken = require('./modules/shared/decodedToken');
-
+const { ApolloServer } = require("apollo-server-express");
+const db = require("./modules/models");
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const typeDefs = require("./modules/types");
+const resolvers = require("./modules/resolvers");
+const { decodeToken } = require("./utils/auth");
+const { PORT } = require("./constants");
+const cors = require("cors");
 
 const startServer = () => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({ req, res }) => (
-      {
-        res,
-        req,
-        db,
-        loaders,
-      }
-    )
+    context: ({ req, res }) => ({ req, res, db }),
   });
 
-  (async function () {
-    try {
-      // await db.sequelize.drop()
-      // await db.sequelize.sync()
-      await db.sequelize.authenticate()
-      console.log('Database Connected')
-    } catch (error) {
-      console.log('Database Error', error)
-    }
-  })();
+  db.sequelize.authenticate().then((e) => console.log("Database Connected"));
 
   const app = express();
+  const corsOptions = {
+    origin: "http://localhost:3000",
+    credentials: true,
+  };
+  app.use(cors(corsOptions));
 
-  app.use(cookieParser())
+  app.use(cookieParser());
 
-  app.use(decodedToken);
+  app.use(decodeToken);
 
-  server.applyMiddleware({ app });
+  server.applyMiddleware({ app }); // app is from an existing express app
 
-  app.listen({ port: 4000 }, () => {
-    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
-  })
-}
-
+  app.listen({ port: PORT }, () =>
+    console.log(
+      `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
+    )
+  );
+};
 
 startServer();
-

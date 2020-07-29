@@ -15,6 +15,7 @@ const userType = gql`
     type Mutation {
         login(username: String!, password: String!): Result
         signUp(username: String!, password: String!): Result
+        invalidateTokens: Boolean!
     }
 `
 

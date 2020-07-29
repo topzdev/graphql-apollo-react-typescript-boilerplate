@@ -1,13 +1,15 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const config = require('../../config');
-const ms = require('ms')
+const { createToken, setCookies } = require('../../utils/auth');
+const models = require('../models');
+
 module.exports = {
     Query: {
         me: async (_, __, { db, req }) => {
-            console.log(req.user)
-
-            if (req.user && req.user.userId) return null;
+            if (!req.user) return {
+                success: false,
+                message: 'Login first',
+                data: null
+            };
 
             return {
                 success: true,
@@ -31,12 +33,7 @@ module.exports = {
                 message: 'Password not match'
             }
 
-            const refreshToken = jwt.sign({ id: user.id, count: user.count }, config.jwtSecret, { expiresIn: '7d' });
-            const accessToken = jwt.sign({ id: user.id }, config.jwtSecret, { expiresIn: '1h' });
-
-            res.cookie('refresh-token', refreshToken, { maxAge: ms('7d') })
-            res.cookie('access-token', accessToken, { maxAge: ms('1h') })
-
+            setCookies(createToken(user), res);
 
             return {
                 success: true,
@@ -58,17 +55,24 @@ module.exports = {
 
             const user = await db.User.create({ username, password: hashPassword });
 
-            const refreshToken = jwt.sign({ id: user.id, count: user.count }, config.jwtSecret, { expiresIn: '7d' });
-            const accessToken = jwt.sign({ id: user.id }, config.jwtSecret, { expiresIn: '1h' });
-
-            res.cookie('refresh-token', refreshToken, { maxAge: ms('7d') })
-            res.cookie('access-token', accessToken, { maxAge: ms('1h') })
+            setCookies(createToken(user), res)
 
             return {
                 success: true,
                 message: "Account created",
                 data: user
             }
+        },
+
+        invalidateTokens: async (_, __, { req }) => {
+            if (!req.user.id) return false
+
+            const user = await models.User.findByPk(req.user.id);
+
+            (await user.increment('count')).save();
+
+            return true;
+
         }
     }
 }
