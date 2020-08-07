@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import {
   ApolloClient,
+  HttpLink,
   InMemoryCache,
   NormalizedCacheObject,
-  createHttpLink,
 } from "@apollo/client";
 import { concatPagination } from "@apollo/client/utilities";
 
@@ -12,8 +12,8 @@ let apolloClient: ApolloClient<NormalizedCacheObject>;
 function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
-    link: createHttpLink({
-      uri: "http://localhost:5000/graphql", // Server URL (must be absolute)
+    link: new HttpLink({
+      uri: "http://localhost:4000/graphql", // Server URL (must be absolute)
       credentials: "include", // Additional fetch() options like `credentials` or `headers`
     }),
     cache: new InMemoryCache({

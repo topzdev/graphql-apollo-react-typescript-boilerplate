@@ -37,7 +37,6 @@ const decodeToken = async (req, res, next) => {
   let accessToken = req.cookies["access-token"];
   let refreshToken = req.cookies["refresh-token"];
 
-  console.log(accessToken, refreshToken);
   if (!accessToken && !refreshToken) return next();
 
   accessToken = sliceToken(accessToken);

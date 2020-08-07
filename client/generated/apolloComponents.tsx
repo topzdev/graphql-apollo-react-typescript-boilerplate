@@ -10,33 +10,35 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
+  DateTime: any;
   /** The `Upload` scalar type represents a file upload. */
   Upload: any;
 };
 
 export type User = {
   __typename?: 'User';
-  id?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
   username?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
   __typename?: 'Query';
   me?: Maybe<Result>;
-  postsFeed?: Maybe<Array<Maybe<Post>>>;
-  postsByUserId?: Maybe<Array<Maybe<Post>>>;
-  postById?: Maybe<Post>;
+  postsFeed: Array<Post>;
+  postsByUserId: Array<Maybe<Post>>;
+  postById: Post;
   helloWorld?: Maybe<Scalars['String']>;
 };
 
 
 export type QueryPostsByUserIdArgs = {
-  id: Scalars['String'];
+  id: Scalars['ID'];
 };
 
 
 export type QueryPostByIdArgs = {
-  id: Scalars['String'];
+  id: Scalars['ID'];
 };
 
 export type Mutation = {
@@ -44,6 +46,7 @@ export type Mutation = {
   login?: Maybe<Result>;
   signUp?: Maybe<Result>;
   invalidateTokens: Scalars['Boolean'];
+  likePost?: Maybe<Scalars['Boolean']>;
   addPost?: Maybe<Result>;
   updatePost?: Maybe<Result>;
   deletePost?: Maybe<Result>;
@@ -62,6 +65,11 @@ export type MutationSignUpArgs = {
 };
 
 
+export type MutationLikePostArgs = {
+  id?: Maybe<Scalars['ID']>;
+};
+
+
 export type MutationAddPostArgs = {
   title: Scalars['String'];
   content: Scalars['String'];
@@ -70,7 +78,7 @@ export type MutationAddPostArgs = {
 
 
 export type MutationUpdatePostArgs = {
-  id: Scalars['String'];
+  id: Scalars['ID'];
   title?: Maybe<Scalars['String']>;
   content?: Maybe<Scalars['String']>;
   draft?: Maybe<Scalars['Boolean']>;
@@ -78,18 +86,21 @@ export type MutationUpdatePostArgs = {
 
 
 export type MutationDeletePostArgs = {
-  id: Scalars['String'];
+  id: Scalars['ID'];
 };
 
 export type Post = {
   __typename?: 'Post';
-  id?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
   title?: Maybe<Scalars['String']>;
   content?: Maybe<Scalars['String']>;
   author?: Maybe<User>;
-  like?: Maybe<Scalars['Int']>;
+  likes?: Maybe<Scalars['Int']>;
   draft?: Maybe<Scalars['Boolean']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
 };
+
 
 export type DataResult = Post | User;
 
@@ -124,6 +135,48 @@ export type CreatePostMutation = (
       & Pick<Post, 'id'>
     ) | { __typename?: 'User' }> }
   )> }
+);
+
+export type PostsFeedQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PostsFeedQuery = (
+  { __typename?: 'Query' }
+  & { postsFeed: Array<(
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'title' | 'content' | 'createdAt' | 'likes' | 'draft'>
+    & { author?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'username' | 'id'>
+    )> }
+  )> }
+);
+
+export type LikePostMutationVariables = Exact<{
+  id?: Maybe<Scalars['ID']>;
+}>;
+
+
+export type LikePostMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'likePost'>
+);
+
+export type PostByIdQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type PostByIdQuery = (
+  { __typename?: 'Query' }
+  & { postById: (
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'title' | 'content' | 'likes' | 'draft'>
+    & { author?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username'>
+    )> }
+  ) }
 );
 
 export type LoginMutationVariables = Exact<{
@@ -185,6 +238,118 @@ export function useCreatePostMutation(baseOptions?: ApolloReactHooks.MutationHoo
 export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
 export type CreatePostMutationResult = ApolloReactCommon.MutationResult<CreatePostMutation>;
 export type CreatePostMutationOptions = ApolloReactCommon.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
+export const PostsFeedDocument = gql`
+    query postsFeed {
+  postsFeed {
+    id
+    title
+    author {
+      username
+      id
+    }
+    content
+    createdAt
+    likes
+    draft
+  }
+}
+    `;
+
+/**
+ * __usePostsFeedQuery__
+ *
+ * To run a query within a React component, call `usePostsFeedQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePostsFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePostsFeedQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePostsFeedQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<PostsFeedQuery, PostsFeedQueryVariables>) {
+        return ApolloReactHooks.useQuery<PostsFeedQuery, PostsFeedQueryVariables>(PostsFeedDocument, baseOptions);
+      }
+export function usePostsFeedLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PostsFeedQuery, PostsFeedQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<PostsFeedQuery, PostsFeedQueryVariables>(PostsFeedDocument, baseOptions);
+        }
+export type PostsFeedQueryHookResult = ReturnType<typeof usePostsFeedQuery>;
+export type PostsFeedLazyQueryHookResult = ReturnType<typeof usePostsFeedLazyQuery>;
+export type PostsFeedQueryResult = ApolloReactCommon.QueryResult<PostsFeedQuery, PostsFeedQueryVariables>;
+export const LikePostDocument = gql`
+    mutation likePost($id: ID) {
+  likePost(id: $id)
+}
+    `;
+export type LikePostMutationFn = ApolloReactCommon.MutationFunction<LikePostMutation, LikePostMutationVariables>;
+
+/**
+ * __useLikePostMutation__
+ *
+ * To run a mutation, you first call `useLikePostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLikePostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [likePostMutation, { data, loading, error }] = useLikePostMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useLikePostMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<LikePostMutation, LikePostMutationVariables>) {
+        return ApolloReactHooks.useMutation<LikePostMutation, LikePostMutationVariables>(LikePostDocument, baseOptions);
+      }
+export type LikePostMutationHookResult = ReturnType<typeof useLikePostMutation>;
+export type LikePostMutationResult = ApolloReactCommon.MutationResult<LikePostMutation>;
+export type LikePostMutationOptions = ApolloReactCommon.BaseMutationOptions<LikePostMutation, LikePostMutationVariables>;
+export const PostByIdDocument = gql`
+    query PostById($id: ID!) {
+  postById(id: $id) {
+    id
+    title
+    content
+    author {
+      id
+      username
+    }
+    likes
+    draft
+  }
+}
+    `;
+
+/**
+ * __usePostByIdQuery__
+ *
+ * To run a query within a React component, call `usePostByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePostByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePostByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function usePostByIdQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<PostByIdQuery, PostByIdQueryVariables>) {
+        return ApolloReactHooks.useQuery<PostByIdQuery, PostByIdQueryVariables>(PostByIdDocument, baseOptions);
+      }
+export function usePostByIdLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PostByIdQuery, PostByIdQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<PostByIdQuery, PostByIdQueryVariables>(PostByIdDocument, baseOptions);
+        }
+export type PostByIdQueryHookResult = ReturnType<typeof usePostByIdQuery>;
+export type PostByIdLazyQueryHookResult = ReturnType<typeof usePostByIdLazyQuery>;
+export type PostByIdQueryResult = ApolloReactCommon.QueryResult<PostByIdQuery, PostByIdQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {
   login(username: $username, password: $password) {

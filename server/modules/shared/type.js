@@ -1,18 +1,20 @@
-const { gql } = require('apollo-server-express')
+const { gql } = require("apollo-server-express");
 
 const defaultType = gql`
-    union DataResult = Post | User
+  scalar DateTime
 
-    type Result {
-        success: Boolean
-        message: String
-        data: DataResult
-        token: String
-    }
+  union DataResult = Post | User
 
-    type Query {
-        helloWorld: String
-    }
-`
+  type Result {
+    success: Boolean
+    message: String
+    data: DataResult
+    token: String
+  }
 
-module.exports = defaultType
+  type Query {
+    helloWorld: String
+  }
+`;
+
+module.exports = defaultType;

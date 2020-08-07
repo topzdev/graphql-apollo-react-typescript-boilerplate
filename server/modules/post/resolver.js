@@ -22,6 +22,10 @@ module.exports = {
   },
 
   Mutation: {
+    likePost: async (_, { id }, { db }) => {
+      await db.Post.increment("likes", { where: { id } });
+      return true;
+    },
     addPost: async (_, { title, content, draft }, { db, req }) => {
       console.log("Add post", req.user);
       return {
